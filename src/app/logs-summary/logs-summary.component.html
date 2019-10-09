@@ -71,7 +71,7 @@
               <table class="table align-items-center table-dark table-flush">
                 <thead class="thead-dark">
                   <tr>
-                  	<th scope="col">Name</th>
+                  	<th *ngIf="userInfo.userRole == 'admin'" scope="col">Name</th>
                     <th scope="col">Date</th>
                     <th scope="col">day</th>
                     <th scope="col">Hours in office</th>
@@ -80,7 +80,7 @@
                 </thead>
                 <tbody>
                   <tr *ngFor="let data of currentMonthLogs | paginate:{itemsPerPage: 10, currentPage:p}; let i = index">
-                    <th scope="row">
+                    <th scope="row" *ngIf="userInfo.userRole == 'admin'">
                       {{ data.userId.name }}
                     </th>
                     <th scope="row">

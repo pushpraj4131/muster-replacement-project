@@ -52,33 +52,36 @@ export class UserDetailComponent implements OnInit {
 
 	ngOnInit() {
 		// this.getMACAddress();
-		
-
 		var self = this;
-		$(function() {
+		$(document).ready(function(){
+			
+				// alert("The input clicked was clicked.");
+				$(function() {
 
-			var start = moment().subtract(29, 'days');
-			var end = moment();
+					var start = moment().subtract(29, 'days');
+					var end = moment();
 
-			function cb(start, end) {
-				self.getRangeDate(start, end);
-			}
+					function cb(start, end) {
+						self.getRangeDate(start, end);
+					}
 
-			$('#reportrange').daterangepicker({
-				startDate: start,
-				endDate: end,
-				ranges: {
-					'Today': [moment(), moment()],
-					'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-					'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-					'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-					'This Month': [moment().startOf('month'), moment().endOf('month')],
-					'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-				}
-			}, cb);
+					$('#reportrange').daterangepicker({
+						startDate: start,
+						endDate: end,
+						ranges: {
+							'Today': [moment(), moment()],
+							'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+							'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+							'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+							'This Month': [moment().startOf('month'), moment().endOf('month')],
+							'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+						}
+					}, cb);
 
-			cb(start, end);
+					cb(start, end);
 
+				});
+			
 		});
 		$(document).ready(function(){
 			$('[data-toggle="tooltip"]').tooltip();   
@@ -111,7 +114,7 @@ export class UserDetailComponent implements OnInit {
 			console.log("last five days response" , response);
 			await this.properFormatDate(response);
 			this.fiveDaysLogs = response;
-			await this.calculateTotalDuration(this.fiveDaysLogs);
+			await this.calculateTotalDuration(this.fiveDaysLogs , 5);
 		} ,(err) => {
 			console.log("last five days error" , err);
 		});
@@ -119,8 +122,6 @@ export class UserDetailComponent implements OnInit {
 	resetForm(){
 		this.search = false;
 		(<HTMLInputElement>document.getElementById("reportrange")).value = "";
-		// (<HTMLInputElement>document.getElementById("secondDate")).value = "";
-
 	}
 	openModel(index){
 		console.log("hey" , index);
@@ -146,13 +147,15 @@ export class UserDetailComponent implements OnInit {
 				console.log("response of getLogsReportById" , res);
 				this.logs = this.properFormatDate(res);
 				//calculate the total duration
-				// this.logs = res;
-				this.calculateTotalDuration(this.logs);
+				var startDate = moment(start._d);
+  				var endDate = moment(end._d);  
+				var resultHours = endDate.diff(startDate, 'days', true);
+				console.log("resultHours =====================++>" , resultHours);
+				this.calculateTotalDuration(this.logs , resultHours);
 			} , (err)=>{
 				console.log("err of getLogsReportById" , err);
 			});
 		}
-		// console.log(moment(start._d).format("DD/MM/YYYY"),moment(end._d).format("DD/MM/YYYY"));
 	}
 	logout() {
 		console.log("logiut ccalled");
@@ -166,29 +169,42 @@ export class UserDetailComponent implements OnInit {
 // 			alert(macAddress);
 // 		})
 // }
-	calculateTotalDuration(array){
+	calculateTotalDuration(array , resultHours){
 		var workingHours = 0;
 		var totalHours = 0;
+		for(var i = 0 ; i< Math.ceil(resultHours) ; i++){
+			totalHours = totalHours + 30600; 
+		}
 		array.forEach((obj)=>{
 			// console.log(obj);
 			if(obj.diffrence){
-				totalHours = totalHours + 30600; 
 				workingHours = workingHours + moment.duration(obj.diffrence).asSeconds();
-				console.log(moment.duration(obj.diffrence).asSeconds());
+				console.log("workingHours ====>" , workingHours);
 			}
 		});
-		this.totalHoursToWork =  moment.utc(totalHours*1000).format('HH:mm:ss');
-		this.totalHoursWorked = moment.utc(workingHours*1000).format('HH:mm:ss');
-		console.log("total hours attednent ====>" , moment.utc(workingHours*1000).format('HH:mm:ss'));
-		console.log("total hours to attendnace====>" , moment.utc(totalHours*1000).format('HH:mm:ss'));
+		//calculate total working hours 
+		var minutes = Math.floor(totalHours / 60);
+		totalHours = totalHours%60;
+		var hours = Math.floor(minutes/60)
+		minutes = minutes%60;
+		console.log("totalHours ====>" , hours , minutes);
+		this.totalHoursToWork =  hours+":"+minutes+":"+"00";
+		//calculate hours worked 
+		
+		var minutes = Math.floor(workingHours / 60);
+		workingHours = workingHours%60;
+		var hours = Math.floor(minutes/60)
+		minutes = minutes%60;
+		this.totalHoursWorked = hours+":"+minutes+":"+"00";
+		console.log("total hours attednent ====>" , this.totalHoursToWork);
+		console.log("total hours to attendnace====>" , this.totalHoursWorked);
 
 	}
 	properFormatDate(data){
 		return data = data.filter((obj)=>{
-			console.log("Before date =======>" , obj.date);
+			// console.log("Before date =======>" , obj.date);
 			obj.date = moment(obj.date).utc().format("DD/MM/YYYY");
-			// obj.date = moment(obj.date).format("DD/MM/YYYY");
-			console.log("after date =======>" , obj.date);
+			// console.log("after date =======>" , obj.date);
 			return obj.date;
 		});
 	}

@@ -6,29 +6,8 @@
       <a class="navbar-brand" >
         <img src="./assets/img/brand/raoinfotech-logo-small.png" />
       </a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse-main" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbar-collapse-main">
-        <!-- Collapse header -->
-        <div class="navbar-collapse-header d-md-none">
-          <div class="row">
-            <div class="col-6 collapse-brand">
-              <a href="../index.html">
-                <img src="../assets/img/brand/blue.png">
-              </a>
-            </div>
-            <div class="col-6 collapse-close">
-              <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse-main" aria-controls="sidenav-main" aria-expanded="false" aria-label="Toggle sidenav">
-                <span></span>
-                <span></span>
-              </button>
-            </div>
-          </div>
-        </div>
-        <!-- Navbar items -->
-            
-      </div>
+      
+      
     </div>
   </nav>
   <!-- Header -->
@@ -79,6 +58,7 @@
                 <button type="button"   (click)="login(loginForm.value)" [disabled]= "isDisable || loginForm.invalid" class="btn btn-primary my-4">Sign in</button>
               </div>
             </form>
+            <span *ngIf="isError" class="h4 font-weight-bold mb-2 text-danger">{{errorMessage}}</span>  
           </div>
         </div>
       </div>
