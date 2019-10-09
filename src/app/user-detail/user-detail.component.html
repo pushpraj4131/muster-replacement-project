@@ -1,19 +1,10 @@
- <div class="main-content" >
+	 <div class="main-content" >
  	
  	<nav class="navbar navbar-top navbar-expand-md navbar-dark" id="navbar-main">
  		<div class="container-fluid">
 
  			<a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="./index.html">User Details</a>
- 			<form  class="navbar-search navbar-search-dark form-inline mr-3 d-none d-md-flex ml-lg-auto">
- 				<div  class="form-group mb-0">
- 					<div class="input-group input-group-alternative">
- 						<div class="input-group-prepend">
- 							<span class="input-group-text"><i class="fas fa-calender"></i></span>
- 						</div>
- 						<input style="cursor: pointer;" readonly class="form-control" id="reportrange" placeholder="---" type="text">
- 					</div>
- 				</div>
- 			</form>
+ 			
  			<!-- <div id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
  				<i class="fa fa-calendar"></i>&nbsp;
  				<span></span> <i class="fa fa-caret-down"></i>
@@ -185,99 +176,115 @@
 	<div class="row m-auto" >
 	</div>
 	<div class="row mt-5 " >
-        <div class="col-xl-12 mb-5 mb-xl-0">
-          <div class="card shadow">
-            <div class="card-header border-0">
-              <div class="row align-items-center">
-                <div class="col mt-2">
-                  <h3 class="mb-0" *ngIf="!search">last 5 days summary</h3>
-                  <h3 class="mb-0" *ngIf="search && (!data.secondDate) ">{{data.firstDate}} summary</h3>
-                  <h3 class="mb-0" *ngIf="search && (data.secondDate) ">{{data.firstDate}} - {{data.secondDate}} Summary</h3>
-                </div>
-                <form>
-                	<div class="input-daterange datepicker row align-items-center">
-                		<div class="col mt-3">
-                			<div class="form-group">
-                				<div class="input-group input-group-alternative">
-                					<div class="input-group-prepend">
-                						<span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
-                					</div>
-                					<input class="form-control datepicker" name="firstDate" placeholder="Select date" type="text" id="firstDate" [(ngModel)]="data.firstDate" required >
-                				</div>
-                			</div>
-                		</div>
-                		<div class="col mt-3">
-                			<div class="form-group">
-                				<div class="input-group input-group-alternative">
-                					<div class="input-group-prepend">
-                						<span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
-                					</div>
-                					<input class="form-control datepicker" name="secondDate" placeholder="Select date" type="text" id="secondDate" [(ngModel)]="data.secondDate" >
-                				</div>
-                			</div>
-                		</div>
-                		<div class="col">
-                			<input type="submit" class="btn btn-outline-default" (click)="getRecord()" value="Get Record">
-                			<i class="fas fa-redo-alt" style="cursor: pointer;" (click)="resetForm()" data-toggle="tooltip" title="Reset form"></i>
-                		</div>
-                	</div>
-                </form>
-                
-                
-            </div>
-        </div>
-            <div class="table-responsive">
-              <table class="table align-items-center table-flush">
-                <thead class="thead-light" >
-                  <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">day</th>
-                    <th scope="col">Hours in office</th>
-                    <th scope="col">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <ng-container *ngIf="fiveDaysLogs && !search">
-                    <tr  *ngFor="let data of fiveDaysLogs | paginate:{itemsPerPage: 5, currentPage:p}; let i = index">
-                      <th scope="row">
-                        {{ data.date }}
-                      </th>
-                      <td>
-                        {{data.day}}
-                      </td>
-                      <td>
-                        {{data.diffrence}}
-                      </td>
-                      <td>
-                        <a  id="viewMore" (click)="openModel(i)"><span class="viewMore">View More</span></a>
-                      </td>
-                    </tr>
-                  </ng-container>
-                  <ng-container *ngIf="fiveDaysLogs && search">
-                    <tr  *ngFor="let data of logs | paginate:{itemsPerPage: 5, currentPage:p}; let i = index">
-                      <th scope="row" class="text-uppercase">
-                        {{ data.date }}
-                      </th>
-                      <td>
-                        {{data.day}}
-                      </td>
-                      <td>
-                        {{data.diffrence}}
-                      </td>
-                      <td>
-                        <a  id="viewMore" (click)="openModel(5 * (p - 1) + i)"><span class="viewMore">View More</span></a>
-                      </td>
-                    </tr>
-                  </ng-container>
-                </tbody>
-                <pagination-controls *ngIf="userInfo.userRole == 'admin'"  (pageChange)="p=$event"></pagination-controls>
-              </table>
-            </div>
-          </div>
-        </div>
-       
-      </div>
-
+		<div class="col-xl-12 mb-5 mb-xl-0">
+			<div class="card shadow">
+				<div class="card-header border-0">
+					<div class="row align-items-center">
+						<div class="col mt-2">
+							<h3 class="mb-0" *ngIf="!search">last 5 days summary</h3>
+							<h3 class="mb-0" *ngIf="search && (!data.secondDate) ">{{data.firstDate}} summary</h3>
+							<h3 class="mb-0" *ngIf="search && (data.secondDate) ">{{data.firstDate}} - {{data.secondDate}} Summary</h3>
+						</div>
+						
+						<div class="input-daterange datepicker row align-items-center">
+							<div class="col mt-3">
+								<div class="form-group">
+									<div class="input-group input-group-alternative">
+										<div class="input-group-prepend">
+											<span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
+										</div>
+										<input style="cursor: pointer;" readonly class="form-control" id="reportrange" placeholder="search Record" type="text" value="---">
+									</div>
+							</div>
+						</div>
+								</div>
+							<div class="col">
+								<input type="submit" class="btn btn-outline-default" (click)="getRecord()" value="Get Record">
+								<i class="fas fa-redo-alt" style="cursor: pointer;" (click)="resetForm()" data-toggle="tooltip" title="Reset form"></i>
+							</div>
+						
+						
+						
+					</div>
+				</div>
+				<div class="table-responsive">
+					<table class="table align-items-center table-flush">
+						<thead class="thead-light" >
+							<tr>
+								<th scope="col">Name</th>
+								<th scope="col">day</th>
+								<th scope="col">Hours in office</th>
+								<th scope="col">Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							<ng-container *ngIf="fiveDaysLogs && !search">
+								<tr  *ngFor="let data of fiveDaysLogs | paginate:{itemsPerPage: 5, currentPage:p}; let i = index">
+									<th scope="row">
+										{{ data.date }}
+									</th>
+									<td>
+										{{data.day}}
+									</td>
+									<td>
+										{{data.diffrence}}
+									</td>
+									<td>
+										<a  id="viewMore" (click)="openModel(i)"><span class="viewMore">View More</span></a>
+									</td>
+								</tr>
+							</ng-container>
+							<ng-container *ngIf="fiveDaysLogs && search">
+								<tr  *ngFor="let data of logs | paginate:{itemsPerPage: 5, currentPage:p}; let i = index">
+									<th scope="row" class="text-uppercase">
+										{{ data.date }}
+									</th>
+									<td>
+										{{data.day}}
+									</td>
+									<td>
+										{{data.diffrence}}
+									</td>
+									<td>
+										<a  id="viewMore" (click)="openModel(5 * (p - 1) + i)"><span class="viewMore">View More</span></a>
+									</td>
+								</tr>
+							</ng-container>
+						</tbody>
+						<pagination-controls *ngIf="userInfo.userRole == 'admin'"  (pageChange)="p=$event"></pagination-controls>
+					</table>
+				</div>
+			</div>
+		</div>
+		
+	</div>
+	<div class="row m-auto" >
+		
+		<div class="col-xl-6 mb-5 mb-xl-0 mt-4">
+			<div class="card card-shadow card-stats mb-4 mb-xl-0">
+				<div class="card-body button" data-toggle="tooltip" title="Log Attendance" style="height: 132px">
+					<div class="row">
+						<div class="col">
+							<h5 class="font-weight-bold text-uppercase text-muted mb-0 mt-3">Total hours completed</h5>
+						</div>
+						<div class="col">
+							<h5 class=" font-weight-bold text-uppercase text-muted mb-0 mt-3">Required hours to complete</h5>
+						</div>
+						
+					</div>
+					<div class="row">
+						<div class="col">
+							<h3 class="card-title font-weight-bold text-uppercase text-muted mb-0 ">{{totalHoursWorked}}</h3>
+						</div>
+						<div class="col">
+							<h3 class="card-title font-weight-bold text-uppercase text-muted mb-0 ">{{totalHoursToWork}}</h3>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 	<!-- Footer -->
 	<footer class="footer">
 		<div class="row align-items-center justify-content-xl-between">

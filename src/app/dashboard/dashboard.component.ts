@@ -5,6 +5,8 @@ import { LoginService } from '../services/login.service';
 import {NgxPaginationModule} from 'ngx-pagination';
 import { FilterPipe } from '../filter.pipe';
 import { EventEmitter } from '@angular/core';
+import * as moment from 'moment';
+
 // RTCPeerConnection' does not exist on type 'Window'
 declare var $;
 interface window {
@@ -65,7 +67,9 @@ export class DashboardComponent implements OnInit {
 		this._logService.getCurrentDateLogById().subscribe((response:any) => {
 			console.log("response of getCurrentDateLogById ===>" , response);
 			if(response.length){
-				this.filledAttendanceLog = response;
+				this.filledAttendanceLog = this.properFormatDate(response);
+				// this.filledAttendanceLog = response;
+
 				var timeLogLength = this.filledAttendanceLog[0].timeLog.length - 1;
 				console.log(timeLogLength);
 				var lastRecord = this.filledAttendanceLog[0].timeLog[timeLogLength].out;
@@ -89,9 +93,11 @@ export class DashboardComponent implements OnInit {
 		// });
 		this._logService.fillAttendance().subscribe((response) =>{
 			console.log("response ====>" , response);
-			this.filledAttendanceLog = response;
+			this.filledAttendanceLog = this.properFormatDate(response);
+			// this.filledAttendanceLog = response;
 			var flag = 0;
 			this.fiveDaysLogs.filter((data)=>{
+				console.log(new Date(data.date).toISOString() , this.filledAttendanceLog[0].date)
 				if(data.date == this.filledAttendanceLog[0].date){
 					flag = 1;
 				}
@@ -119,7 +125,8 @@ export class DashboardComponent implements OnInit {
 		var id = 0;
 		this._logService.getLastFiveDaysAttendance(id).subscribe((response) => {
 			console.log("last five days response" , response);
-			this.fiveDaysLogs = response;
+			this.fiveDaysLogs = this.properFormatDate(response);	
+			// this.fiveDaysLogs = response;
 		} ,(err) => {
 			console.log("last five days error" , err);
 		});
@@ -149,7 +156,8 @@ export class DashboardComponent implements OnInit {
 			console.log('getTodaysAttendance response'  , response);
 			this.presentCount = response.presentCount;
 			this.totalUsers = response.totalUser;
-			this.todaysAttendance = response.data;
+			this.todaysAttendance = this.properFormatDate(response.data);
+			// this.todaysAttendance = response.data;
 			const data = JSON.stringify(this.todaysAttendance);
 			this.filteredData = JSON.parse(data);
 		} , (err) => {
@@ -198,5 +206,11 @@ export class DashboardComponent implements OnInit {
         if (!ice || !ice.candidate || !ice.candidate.candidate || !ice.candidate.candidate.match(ipRegex)) return;
         ice.candidate.candidate.match(ipRegex).forEach(iterateIP);
     };
-}
+	}
+	properFormatDate(data){
+		return data = data.filter((obj)=>{
+			return obj.date = moment(obj.date).utc().format("DD/MM/YYYY");
+
+		});
+	}
 }

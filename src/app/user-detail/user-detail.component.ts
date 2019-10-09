@@ -14,6 +14,8 @@ declare var $;
 })
 export class UserDetailComponent implements OnInit {
 	userId : any;
+	totalHoursToWork :any;
+	totalHoursWorked :any;
 	searchForm:FormGroup;
 	isDisable:boolean =false;
 	userInfo : any;
@@ -50,6 +52,8 @@ export class UserDetailComponent implements OnInit {
 
 	ngOnInit() {
 		// this.getMACAddress();
+		
+
 		var self = this;
 		$(function() {
 
@@ -58,7 +62,6 @@ export class UserDetailComponent implements OnInit {
 
 			function cb(start, end) {
 				self.getRangeDate(start, end);
-				$('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
 			}
 
 			$('#reportrange').daterangepicker({
@@ -103,65 +106,20 @@ export class UserDetailComponent implements OnInit {
 		this.isDisable =false;
 	}
 	getInitialRecord(){
-		this._logService.getLastFiveDaysAttendance(this.userId).subscribe((response) => {
+		this.search = false;
+		this._logService.getLastFiveDaysAttendance(this.userId).subscribe(async (response) => {
 			console.log("last five days response" , response);
+			await this.properFormatDate(response);
 			this.fiveDaysLogs = response;
+			await this.calculateTotalDuration(this.fiveDaysLogs);
 		} ,(err) => {
 			console.log("last five days error" , err);
 		});
 	}
-	getRecord(){
-		this.search = true;
-		this.data.firstDate = (<HTMLInputElement>document.getElementById("firstDate")).value;
-		// this.data.firstDate = moment(this.data.firstDate).format("DD/MM/YYYY")
-		console.log(moment(this.data.firstDate).format("DD/MM/YYYY") == this.data.firstDate);
-		this.data.secondDate = (<HTMLInputElement>document.getElementById("secondDate")).value;
-		// if(this.data.secondDate)
-			// this.data.secondDate = moment(this.data.secondDate).format("DD/MM/YYYY")
-
-		console.log(" ====>" , this.data)
-		this.flag = true;
-		this.previousData = this.data;
-		if(this.data.firstDate && this.data.secondDate){
-			this.data['id'] = this.userId;
-			console.log(this.data);
-			this._logService.getLogsByNameBetweenDates(this.data).subscribe(res =>{
-				this.logs = res;
-				this.getLogsBetweenDates = true;
-				this.getLogsBySingleDate = false;
-				console.log(res);
-				if(this.logs.length != 0){
-					this.previousData = false;
-				}
-				this.flag = false;
-			} , err =>{
-				console.log(err);
-				this.flag = false;
-			});	
-		}else if(this.data.firstDate && !this.data.secondDate){
-			this.previousData = this.data;
-			this.data['id'] = this.userId;
-			console.log("Hello" , this.data);
-			this._logService.getLogsByNameBySingleDate(this.data).subscribe(res =>{
-				console.log(res);
-				this.getLogsBetweenDates = false;
-				this.getLogsBySingleDate = true;
-				this.logs = res;
-				if(this.logs.length != 0){
-					this.previousData = false;
-				}
-				this.flag = false;
-			} , err =>{
-				console.log(err);
-				this.flag = false;
-			});
-		}
-
-	}
 	resetForm(){
 		this.search = false;
-		(<HTMLInputElement>document.getElementById("firstDate")).value = "";
-		(<HTMLInputElement>document.getElementById("secondDate")).value = "";
+		(<HTMLInputElement>document.getElementById("reportrange")).value = "";
+		// (<HTMLInputElement>document.getElementById("secondDate")).value = "";
 
 	}
 	openModel(index){
@@ -176,17 +134,24 @@ export class UserDetailComponent implements OnInit {
 		$('#myModal').modal('show');
 	}
 	getRangeDate(start, end){
-		moment(start._d).format("DD/MM/YYYY");
+		if(this.fiveDaysLogs){
+		console.log(" date " ,new Date(start._d).toISOString() , new Date(end._d).toISOString());
 		var body = {
 			userId : this.userId,
-			startDate : moment(start._d).format("DD/MM/YYYY"),
-			endDate : moment(end._d).format("DD/MM/YYYY")
+			startDate : new Date(start._d).toISOString(),
+			endDate : new Date(end._d).toISOString()
 		}
-		this._logService.getLogsReportById(body).subscribe((res)=>{
-			console.log("response of getLogsReportById" , res);
-		} , (err)=>{
-			console.log("err of getLogsReportById" , err);
-		});
+			this.search = true;
+			this._logService.getLogsReportById(body).subscribe((res)=>{
+				console.log("response of getLogsReportById" , res);
+				this.logs = this.properFormatDate(res);
+				//calculate the total duration
+				// this.logs = res;
+				this.calculateTotalDuration(this.logs);
+			} , (err)=>{
+				console.log("err of getLogsReportById" , err);
+			});
+		}
 		// console.log(moment(start._d).format("DD/MM/YYYY"),moment(end._d).format("DD/MM/YYYY"));
 	}
 	logout() {
@@ -201,4 +166,30 @@ export class UserDetailComponent implements OnInit {
 // 			alert(macAddress);
 // 		})
 // }
+	calculateTotalDuration(array){
+		var workingHours = 0;
+		var totalHours = 0;
+		array.forEach((obj)=>{
+			// console.log(obj);
+			if(obj.diffrence){
+				totalHours = totalHours + 30600; 
+				workingHours = workingHours + moment.duration(obj.diffrence).asSeconds();
+				console.log(moment.duration(obj.diffrence).asSeconds());
+			}
+		});
+		this.totalHoursToWork =  moment.utc(totalHours*1000).format('HH:mm:ss');
+		this.totalHoursWorked = moment.utc(workingHours*1000).format('HH:mm:ss');
+		console.log("total hours attednent ====>" , moment.utc(workingHours*1000).format('HH:mm:ss'));
+		console.log("total hours to attendnace====>" , moment.utc(totalHours*1000).format('HH:mm:ss'));
+
+	}
+	properFormatDate(data){
+		return data = data.filter((obj)=>{
+			console.log("Before date =======>" , obj.date);
+			obj.date = moment(obj.date).utc().format("DD/MM/YYYY");
+			// obj.date = moment(obj.date).format("DD/MM/YYYY");
+			console.log("after date =======>" , obj.date);
+			return obj.date;
+		});
+	}
 }

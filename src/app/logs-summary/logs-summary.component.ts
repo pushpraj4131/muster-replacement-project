@@ -4,6 +4,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { LoginService } from '../services/login.service';
 import {NgxPaginationModule} from 'ngx-pagination';
 import { FilterPipe } from '../filter.pipe';
+import * as moment from 'moment';
+
 
 
 declare var $;
@@ -75,11 +77,13 @@ export class LogsSummaryComponent implements OnInit {
 		console.log(this.modelValue);
 		$('#myModal').modal('show');
 	}
+	// If userRole == employee
 	page(i){
 		console.log("====>" , i);
 		this._logService.getLogsByMonthDefaultByPage({page : i}).subscribe((response) => {
 			console.log("response of getLogsByMonthDefault ==>" , response);
-			this.currentMonthLogs = response;
+			this.currentMonthLogs =  this.properFormatDate(response);
+			// this.currentMonthLogs = response;
 		}, (err) => {
 			console.log("err of getLogsByMonthDefault ==>" , err);
 		});	
@@ -95,11 +99,14 @@ export class LogsSummaryComponent implements OnInit {
 		this.previousData = this.data;
 		//find only first date . 
 		if(this.data.firstDate){
+			console.log(" this.data.firstDate " , this.data.firstDate);
 			this.previousData = this.data;
 			this._logService.getLogsBySingleDate(this.data).subscribe(res =>{
 				this.getLogsBetweenDates = false;
 				this.getLogsBySingleDate = true;
-				this.currentMonthLogs = res;
+				this.currentMonthLogs = this.properFormatDate(res);
+				// this.currentMonthLogs = res;
+
 				this.searchData = res
 				if(this.currentMonthLogs.length != 0){
 					this.previousData = false;
@@ -115,7 +122,8 @@ export class LogsSummaryComponent implements OnInit {
 	getTodaysAttendance(){
 		this._logService.getTodaysAttendance().subscribe((response:any) => {
 			console.log('getTodaysAttendance response in logs '  , response);
-			this.currentMonthLogs = response.data;
+			this.currentMonthLogs = this.properFormatDate(response.data);
+			// this.currentMonthLogs = response.data;
 			this.searchData = response.data;
 			// const data = JSON.stringify(this.todaysAttendance);
 			// this.filteredData = JSON.parse(data);
@@ -135,4 +143,9 @@ export class LogsSummaryComponent implements OnInit {
 	// 	var field1 = (<HTMLInputElement>document.getElementById("nameSearch")).value;
 	// 	this.filteredData = this._filterPipe.transform(items, field1);
 	// }
+	properFormatDate(data){
+		return data = data.filter((obj)=>{
+			return obj.date = moment(obj.date).utc().format("DD/MM/YYYY");
+		});
+	}
 }
