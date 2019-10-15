@@ -85,14 +85,9 @@ export class DashboardComponent implements OnInit {
 		});
 	}
 	fillAttendance(){
-		// 	getMac.getMac(function(err, macAddress){
-		// 	if (err)  throw err
-		// 		console.log("macAddress ======>" , macAddress);
-		// });
 		this._logService.fillAttendance().subscribe((response) =>{
 			console.log("response ====>" , response);
 			this.filledAttendanceLog = this.properFormatDate(response);
-			// this.filledAttendanceLog = response;
 			var flag = 0;
 			this.fiveDaysLogs.filter((data)=>{
 				if(data.date == this.filledAttendanceLog[0].date){
