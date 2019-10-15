@@ -46,8 +46,6 @@ export class DashboardComponent implements OnInit {
 		var self = this;
 		$(document).ready(function(){
 			$('[data-toggle="tooltip"]').tooltip();   
-			
-
 		});
 		this.userInfo = JSON.parse(localStorage.getItem("currentUser"));
 		this.notifyParent.emit(this.userInfo);
@@ -97,7 +95,6 @@ export class DashboardComponent implements OnInit {
 			// this.filledAttendanceLog = response;
 			var flag = 0;
 			this.fiveDaysLogs.filter((data)=>{
-				console.log(new Date(data.date).toISOString() , this.filledAttendanceLog[0].date)
 				if(data.date == this.filledAttendanceLog[0].date){
 					flag = 1;
 				}
@@ -168,44 +165,45 @@ export class DashboardComponent implements OnInit {
 		var field1 = (<HTMLInputElement>document.getElementById("nameSearch")).value;
 		this.todaysAttendance = this._filterPipe.transform(items, field1);
 	}
+	
 
 
 	getUserIP(onNewIP) { //  onNewIp - your listener function for new IPs
-    //compatibility for firefox and chrome
+    	//compatibility for firefox and chrome
     	// console.log("onNewIP" , onNewIP);
-    // (<any>window).mozRTCPeerConnection 
-    var myPeerConnection = (<any>window).RTCPeerConnection || (<any>window).mozRTCPeerConnection  || (<any>window).webkitRTCPeerConnection;
-    var pc = new myPeerConnection({
-        iceServers: []
-    }),
-    noop = function() {},
-    localIPs = {},
-    ipRegex = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/g,
-    key;
+    	// (<any>window).mozRTCPeerConnection 
+    	var myPeerConnection = (<any>window).RTCPeerConnection || (<any>window).mozRTCPeerConnection  || (<any>window).webkitRTCPeerConnection;
+    	var pc = new myPeerConnection({
+    		iceServers: []
+    	}),
+    	noop = function() {},
+    	localIPs = {},
+    	ipRegex = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/g,
+    	key;
 
-    function iterateIP(ip) {
-        if (!localIPs[ip]) onNewIP(ip);
-        localIPs[ip] = true;
-    }
+    	function iterateIP(ip) {
+    		if (!localIPs[ip]) onNewIP(ip);
+    		localIPs[ip] = true;
+    	}
 
      //create a bogus data channel
-    pc.createDataChannel("");
+     pc.createDataChannel("");
 
-    // create offer and set local description
-    pc.createOffer(function(sdp) {
-        sdp.sdp.split('\n').forEach(function(line) {
-            if (line.indexOf('candidate') < 0) return;
-            line.match(ipRegex).forEach(iterateIP);
-        });
-        
-        pc.setLocalDescription(sdp, noop, noop);
-    }, noop); 
+	    // create offer and set local description
+	    pc.createOffer(function(sdp) {
+	    	sdp.sdp.split('\n').forEach(function(line) {
+	    		if (line.indexOf('candidate') < 0) return;
+	    		line.match(ipRegex).forEach(iterateIP);
+	    	});
 
-    //listen for candidate events
-    pc.onicecandidate = function(ice) {
-        if (!ice || !ice.candidate || !ice.candidate.candidate || !ice.candidate.candidate.match(ipRegex)) return;
-        ice.candidate.candidate.match(ipRegex).forEach(iterateIP);
-    };
+	    	pc.setLocalDescription(sdp, noop, noop);
+	    }, noop); 
+
+	    //listen for candidate events
+	    pc.onicecandidate = function(ice) {
+	    	if (!ice || !ice.candidate || !ice.candidate.candidate || !ice.candidate.candidate.match(ipRegex)) return;
+	    	ice.candidate.candidate.match(ipRegex).forEach(iterateIP);
+	    };
 	}
 	properFormatDate(data){
 		return data = data.filter((obj)=>{

@@ -49,27 +49,42 @@
       
       <div class="row mt-5 " >
         <div class="col-xl-12 mb-5 mb-xl-0">
-          <div class="card bg-default shadow">
-            <div class="card-header bg-transparent border-0">
+          <div class="card ">
+            <div class="card-header  border-0">
               <div class="row align-items-center">
                 <div class="col">
-                  <h3 class="text-white mb-0">Logs</h3>
+                  <h3 class=" mb-0">Logs</h3>
                 </div>
-                <div class="col">
-                  <input class="mb-0 custom-input"  id="date1" [(ngModel)]="data.firstDate" *ngIf="userInfo.userRole == 'admin'" type="date" >
+                <div class="col" *ngIf="userInfo.userRole == 'admin'">
+                  <input class="mb-0 custom-input"  id="date1" [(ngModel)]="data.firstDate"  type="date" >
                 </div>
-                <div class="col">
-                  <button type="button" class="btn btn-outline-primary" (click)="getRecord()" *ngIf="userInfo.userRole == 'admin'">get Record</button>
+                <div class="col" *ngIf="userInfo.userRole == 'admin'">
+                  <button type="button" class="btn btn-outline-primary" (click)="getRecord()" >get Record</button>
                 </div>
-                <div class="col">
-                  <input class="mb-0 custom-input" placeholder="search name" id="searchName" (keyup)="searchByName(searchData)" *ngIf="userInfo.userRole == 'admin'" type="text">
+                <div class="col" *ngIf="userInfo.userRole == 'admin'">
+                  <input class="mb-0 custom-input" placeholder="search name" id="searchName" (keyup)="searchByName(searchData)"  type="text">
+                </div>
+                <div class="input-daterange datepicker row align-items-center" *ngIf="userInfo.userRole != 'admin'">
+                  <div class="col mt-3">
+                    <div class="form-group">
+                      <div class="input-group input-group-alternative">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
+                        </div>
+                        <input style="cursor: pointer;" readonly class="form-control" id="reportrange" placeholder="search Record" type="text" value="---">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col" *ngIf="userInfo.userRole != 'admin'">
+                  <i class="fas fa-redo-alt" style="cursor: pointer;" (click)="resetForm()" data-toggle="tooltip" title="Reset form"></i>
                 </div>
               </div>
             </div>
             <div class="table-responsive ">
               <!-- Projects table -->
-              <table class="table align-items-center table-dark table-flush">
-                <thead class="thead-dark">
+              <table class="table align-items-center ">
+                <thead class="">
                   <tr>
                   	<th *ngIf="userInfo.userRole == 'admin'" scope="col">Name</th>
                     <th scope="col">Date</th>
@@ -79,7 +94,45 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let data of currentMonthLogs | paginate:{itemsPerPage: 10, currentPage:p}; let i = index">
+                  <ng-container *ngIf="currentMonthLogs && !search">
+                    <tr  *ngFor="let data of currentMonthLogs | paginate:{itemsPerPage: 10, currentPage:p}; let i = index">
+                      <th scope="row" *ngIf="userInfo.userRole == 'admin'">
+                      {{ data.userId.name }}
+                    </th>
+                      <th scope="row">
+                        {{ data.date }}
+                      </th>
+                      <td>
+                        {{data.day}}
+                      </td>
+                      <td>
+                        {{data.diffrence}}
+                      </td>
+                      <td>
+                        <a  id="viewMore" (click)="openModel(i)"><span class="viewMore">View More</span></a>
+                      </td>
+                    </tr>
+                  </ng-container>
+                  <ng-container *ngIf="currentMonthLogs && search">
+                    <tr  *ngFor="let data of logs | paginate:{itemsPerPage: 10, currentPage:p}; let i = index">
+                      <th scope="row" *ngIf="userInfo.userRole == 'admin'">
+                      {{ data.userId.name }}
+                    </th>
+                      <th scope="row" class="text-uppercase">
+                        {{ data.date }}
+                      </th>
+                      <td>
+                        {{data.day}}
+                      </td>
+                      <td>
+                        {{data.diffrence}}
+                      </td>
+                      <td>
+                        <a  id="viewMore" (click)="openModel(10 * (p - 1) + i)"><span class="viewMore">View More</span></a>
+                      </td>
+                    </tr>
+                  </ng-container>
+                  <!-- <tr *ngFor="let data of currentMonthLogs | paginate:{itemsPerPage: 10, currentPage:p}; let i = index">
                     <th scope="row" *ngIf="userInfo.userRole == 'admin'">
                       {{ data.userId.name }}
                     </th>
@@ -95,23 +148,42 @@
                     <td>
                       <a  id="viewMore" (click)="openModel(10 * (p - 1) + i)"><span class="viewMore">View More</span></a>
                     </td>
-                  </tr>
+                  </tr> -->
                 </tbody>
               </table>
             </div>
-            <div class="card-footer py-4 bg-default">
-            	<!-- <nav aria-label="..." >
-            		<ul class="pagination justify-content-end mb-0 " id="activePagination">
-            			<li  class="page-item active" *ngFor="let number of currentMonthLogsCount ; let i = index" >
-            				<a class="page-link " (click)=page(i+1) >{{number}}</a>
-            			</li>
-            		</ul>
-            	</nav> -->
-              <pagination-controls *ngIf="userInfo.userRole == 'admin'"  (pageChange)="p=$event"></pagination-controls>
+            <div class="card-footer py-4 ">
+            	<pagination-controls   (pageChange)="p=$event"></pagination-controls>
             </div>
           </div>
         </div>
-       
+      </div>
+      <div class="row m-auto" >
+        
+        <div class="col-xl-6 mb-5 mb-xl-0 mt-4">
+          <div class="card card-shadow card-stats mb-4 mb-xl-0">
+            <div class="card-body button" data-toggle="tooltip" title="Log Attendance" style="height: 132px">
+              <div class="row">
+                <div class="col">
+                  <h5 class="font-weight-bold text-uppercase text-muted mb-0 mt-3">Total hours completed</h5>
+                </div>
+                <div class="col">
+                  <h5 class=" font-weight-bold text-uppercase text-muted mb-0 mt-3">Required hours to complete</h5>
+                </div>
+                
+              </div>
+              <div class="row">
+                <div class="col">
+                  <h3 class="card-title font-weight-bold text-uppercase text-muted mb-0 ">{{totalHoursWorked}}</h3>
+                </div>
+                <div class="col">
+                  <h3 class="card-title font-weight-bold text-uppercase text-muted mb-0 ">{{totalHoursToWork}}</h3>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <!-- Footer -->
       <footer class="footer">

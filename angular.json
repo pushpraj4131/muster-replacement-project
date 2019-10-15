@@ -25,7 +25,11 @@
             "styles": [
               "src/styles.css"
             ],
-            "scripts": [],
+            "scripts": [
+              "./node_modules/daterangepicker/moment.min.js",
+              "./node_modules/daterangepicker/daterangepicker.js",
+              "./src/assets/js/plugins/jquery/dist/jquery.min.js"
+            ],
             "es5BrowserSupport": true
           },
           "configurations": {

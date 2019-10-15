@@ -6,7 +6,9 @@ import * as moment from 'moment';
 import { UserService } from '../services/user.service';
 import { LogsService }  from '../services/logs.service';
 import { LoginService } from '../services/login.service';
-declare var $;
+declare var $:any;
+// import $ from 'jquery'
+// (<any>window).$ = $
 @Component({
 	selector: 'app-user-detail',
 	templateUrl: './user-detail.component.html',
@@ -92,6 +94,7 @@ export class UserDetailComponent implements OnInit {
 		$( function() {
 			$("#secondDate").datepicker();
 		});
+		
 		this.getUserById();
 		this.getInitialRecord();
 	}
@@ -114,7 +117,8 @@ export class UserDetailComponent implements OnInit {
 			console.log("last five days response" , response);
 			await this.properFormatDate(response);
 			this.fiveDaysLogs = response;
-			await this.calculateTotalDuration(this.fiveDaysLogs , 5);
+			this.logs = [];
+			await this.calculateTotalDuration(this.fiveDaysLogs , 5 , moment() , moment().subtract(6, 'days'));
 		} ,(err) => {
 			console.log("last five days error" , err);
 		});
@@ -151,7 +155,7 @@ export class UserDetailComponent implements OnInit {
   				var endDate = moment(end._d);  
 				var resultHours = endDate.diff(startDate, 'days', true);
 				console.log("resultHours =====================++>" , resultHours);
-				this.calculateTotalDuration(this.logs , resultHours);
+				this.calculateTotalDuration(this.logs , resultHours , start._d , end._d);
 			} , (err)=>{
 				console.log("err of getLogsReportById" , err);
 			});
@@ -169,11 +173,17 @@ export class UserDetailComponent implements OnInit {
 // 			alert(macAddress);
 // 		})
 // }
-	calculateTotalDuration(array , resultHours){
+	calculateTotalDuration(array , resultHours, start , end){
 		var workingHours = 0;
 		var totalHours = 0;
+		// console.log("start ========+++>" , start._d , "end ==>" , end._d);
 		for(var i = 0 ; i< Math.ceil(resultHours) ; i++){
-			totalHours = totalHours + 30600; 
+			console.log(resultHours - i);
+			var local:any = moment(start._d).subtract(i, 'days');
+			local =  moment(local._d , "YYYY-MM-DD HH:mm:ss").format('dddd');
+			// console.log("add date ====>" , moment(start._d).subtract(i, 'days')._d  , "local ady" ,local);
+			if(local.toString() != "Sunday")
+				totalHours = totalHours + 30600; 
 		}
 		array.forEach((obj)=>{
 			// console.log(obj);

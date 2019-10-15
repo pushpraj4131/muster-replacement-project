@@ -35,21 +35,51 @@ export class LogsSummaryComponent implements OnInit {
 	flag = false;
 	getLogsBySingleDate = false;
 	getLogsBetweenDates = false;
+	search:any;
+	totalHoursToWork:any;
+	totalHoursWorked:any;
 	constructor(public _logService: LogsService , private route: ActivatedRoute,
 		private router: Router , public _loginService: LoginService , public _filterPipe: FilterPipe) { }
 
 	ngOnInit() {
-		// $(function() {
-		// 	$("#searchName").autocomplete({
-		// 		source: [ "akshita keratiya" , "vishal pankhaniya" , "vivek malvi" , "komal shakhiya" , "foram trada" , "happy bhalodiya" , "ram odedra" , "yuvrajsinh jadeja" , "meghna trivedi" , "swati chauhan" , "shraddha gami" , "ankit jadav" , "bhavik kalariya" , "kuldip koradia" , "rohit vishvakarma" , "mehul bhatt" , "kuldip siddhpura"],
-		// 	});
-		// });
+		var self = this;
+		$(document).ready(function(){
+			$(function() {
+
+				var start = moment().subtract(29, 'days');
+				var end = moment();
+
+				function cb(start, end) {
+					self.getRangeDate(start, end);
+				}
+
+				$('#reportrange').daterangepicker({
+					startDate: start,
+					endDate: end,
+					ranges: {
+						'Today': [moment(), moment()],
+						'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+						'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+						'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+						'This Month': [moment().startOf('month'), moment().endOf('month')],
+						'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+					}
+				}, cb);
+
+				cb(start, end);
+
+			});
+			$('[data-toggle="tooltip"]').tooltip();   
+			
+
+		});
 		this.userInfo = JSON.parse(localStorage.getItem("currentUser"));
 		this.getLogsCountByMonthDefault();
 		if(this.userInfo.userRole != 'admin')
 			this.page(1);
 		else if(this.userInfo.userRole == 'admin'){
 			this.getTodaysAttendance();
+			this.search = false;
 			// this.page(1);
 		}
 	}
@@ -57,6 +87,7 @@ export class LogsSummaryComponent implements OnInit {
 	getLogsCountByMonthDefault(){
 		this._logService.getLogsCountByMonthDefault().subscribe((response: any) => {
 			// this.currentMonthLogs = response;
+			console.log("responde ---->" , response);
 			let count = 1;
 			while(response['length'] >= 1){
 				response['length'] = response['length'] / 5;
@@ -72,9 +103,12 @@ export class LogsSummaryComponent implements OnInit {
 	}
 	openModel(index){
 		console.log("hey" , index);
-
-		this.modelValue = this.currentMonthLogs[index];
-		console.log(this.modelValue);
+		if(!this.search){
+			this.modelValue = this.currentMonthLogs[index];
+			console.log(this.modelValue);
+		}else{
+			this.modelValue = this.logs[index];
+		}
 		$('#myModal').modal('show');
 	}
 	// If userRole == employee
@@ -83,6 +117,7 @@ export class LogsSummaryComponent implements OnInit {
 		this._logService.getLogsByMonthDefaultByPage({page : i}).subscribe((response) => {
 			console.log("response of getLogsByMonthDefault ==>" , response);
 			this.currentMonthLogs =  this.properFormatDate(response);
+			this.calculateTotalDuration(this.currentMonthLogs , 5 , moment() , moment().subtract(6, 'days'));
 			// this.currentMonthLogs = response;
 		}, (err) => {
 			console.log("err of getLogsByMonthDefault ==>" , err);
@@ -123,10 +158,9 @@ export class LogsSummaryComponent implements OnInit {
 		this._logService.getTodaysAttendance().subscribe((response:any) => {
 			console.log('getTodaysAttendance response in logs '  , response);
 			this.currentMonthLogs = this.properFormatDate(response.data);
-			// this.currentMonthLogs = response.data;
+			this.calculateTotalDuration(this.currentMonthLogs , 5 , moment() , moment().subtract(6, 'days'));
 			this.searchData = response.data;
-			// const data = JSON.stringify(this.todaysAttendance);
-			// this.filteredData = JSON.parse(data);
+			
 		} , (err) => {
 			console.log('getTodaysAttendance error'  , err);
 		})	
@@ -137,6 +171,71 @@ export class LogsSummaryComponent implements OnInit {
 		this.currentMonthLogs = this._filterPipe.transform(items, field1);
 		console.log("Items  =====> " , items );
 		console.log("field 1 =====> " , field1 , "current month logs =====>" , this.currentMonthLogs);
+	}
+	resetForm(){
+		this.search = false;
+		this.calculateTotalDuration(this.currentMonthLogs , 5 , moment() , moment().subtract(6, 'days'));
+		(<HTMLInputElement>document.getElementById("reportrange")).value = "";
+	}
+	getRangeDate(start, end){
+		if(this.currentMonthLogs){
+		console.log(" date " ,new Date(start._d).toISOString() , new Date(end._d).toISOString());
+		var body = {
+			userId : JSON.parse(localStorage.getItem("currentUser"))._id,
+			startDate : new Date(start._d).toISOString(),
+			endDate : new Date(end._d).toISOString()
+		}
+			this.search = true;
+			this._logService.getLogsReportById(body).subscribe((res:any)=>{
+				console.log("response of getLogsReportById" , res);
+				this.logs = this.properFormatDate(res);
+				//calculate the total duration
+				var startDate = moment(start._d);
+  				var endDate = moment(end._d);  
+				var resultHours = endDate.diff(startDate, 'days', true);
+				console.log("resultHours =====================++>" , resultHours);
+				this.calculateTotalDuration(this.logs , resultHours , start._d , end._d);
+			} , (err)=>{
+				console.log("err of getLogsReportById" , err);
+			});
+		}
+	}
+	calculateTotalDuration(array , resultHours, start , end){
+		var workingHours = 0;
+		var totalHours = 0;
+		// console.log("start ========+++>" , start._d , "end ==>" , end._d);
+		for(var i = 0 ; i< Math.ceil(resultHours) ; i++){
+			console.log(resultHours - i);
+			var local:any = moment(start._d).subtract(i, 'days');
+			local =  moment(local._d , "YYYY-MM-DD HH:mm:ss").format('dddd');
+			// console.log("add date ====>" , moment(start._d).subtract(i, 'days')._d  , "local ady" ,local);
+			if(local.toString() != "Sunday")
+				totalHours = totalHours + 30600; 
+		}
+		array.forEach((obj)=>{
+			// console.log(obj);
+			if(obj.diffrence){
+				workingHours = workingHours + moment.duration(obj.diffrence).asSeconds();
+				console.log("workingHours ====>" , workingHours);
+			}
+		});
+		//calculate total working hours 
+		var minutes = Math.floor(totalHours / 60);
+		totalHours = totalHours%60;
+		var hours = Math.floor(minutes/60)
+		minutes = minutes%60;
+		console.log("totalHours ====>" , hours , minutes);
+		this.totalHoursToWork =  hours+":"+minutes+":"+"00";
+		//calculate hours worked 
+		
+		var minutes = Math.floor(workingHours / 60);
+		workingHours = workingHours%60;
+		var hours = Math.floor(minutes/60)
+		minutes = minutes%60;
+		this.totalHoursWorked = hours+":"+minutes+":"+"00";
+		console.log("total hours attednent ====>" , this.totalHoursToWork);
+		console.log("total hours to attendnace====>" , this.totalHoursWorked);
+
 	}
 
 	// searchByName(items){

@@ -20,11 +20,11 @@
   outline: none;
   border: 0;
   border-bottom: 1px  solid #1f3a68 !important;
-  background-color: #172b4d !important;
-  color : white;
+  /*background-color: #172b4d !important;*/
+  /*color : white;*/
 }
 ::placeholder {
-  color: white;
+  /*color: white;*/
   opacity: 1; /* Firefox */
 }
 
