@@ -109,15 +109,15 @@
                         {{data.diffrence}}
                       </td>
                       <td>
-                        <a  id="viewMore" (click)="openModel(i)"><span class="viewMore">View More</span></a>
+                        <a  id="viewMore" (click)="openModel(10 * (p - 1) + i)"><span class="viewMore">View More</span></a>
                       </td>
                     </tr>
                   </ng-container>
                   <ng-container *ngIf="currentMonthLogs && search">
                     <tr  *ngFor="let data of logs | paginate:{itemsPerPage: 10, currentPage:p}; let i = index">
                       <th scope="row" *ngIf="userInfo.userRole == 'admin'">
-                      {{ data.userId.name }}
-                    </th>
+                        {{ data.userId.name }}
+                      </th>
                       <th scope="row" class="text-uppercase">
                         {{ data.date }}
                       </th>

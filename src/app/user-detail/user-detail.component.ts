@@ -55,9 +55,9 @@ export class UserDetailComponent implements OnInit {
 	ngOnInit() {
 		// this.getMACAddress();
 		var self = this;
+		
 		$(document).ready(function(){
-			
-				// alert("The input clicked was clicked.");
+				alert("The input clicked was clicked.");
 				$(function() {
 
 					var start = moment().subtract(29, 'days');
@@ -71,8 +71,8 @@ export class UserDetailComponent implements OnInit {
 						startDate: start,
 						endDate: end,
 						ranges: {
-							'Today': [moment(), moment()],
-							'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+							'Today': [moment()/*.add(1 , 'days')*/, moment()],
+							'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days') ],
 							'Last 7 Days': [moment().subtract(6, 'days'), moment()],
 							'Last 30 Days': [moment().subtract(29, 'days'), moment()],
 							'This Month': [moment().startOf('month'), moment().endOf('month')],
@@ -83,9 +83,6 @@ export class UserDetailComponent implements OnInit {
 					cb(start, end);
 
 				});
-			
-		});
-		$(document).ready(function(){
 			$('[data-toggle="tooltip"]').tooltip();   
 		});
 		$( function() {
@@ -139,6 +136,7 @@ export class UserDetailComponent implements OnInit {
 		$('#myModal').modal('show');
 	}
 	getRangeDate(start, end){
+		console.log(start._d, end._d)
 		if(this.fiveDaysLogs){
 		console.log(" date " ,new Date(start._d).toISOString() , new Date(end._d).toISOString());
 		var body = {
@@ -177,13 +175,17 @@ export class UserDetailComponent implements OnInit {
 		var workingHours = 0;
 		var totalHours = 0;
 		// console.log("start ========+++>" , start._d , "end ==>" , end._d);
+		if(resultHours < 1)
+			resultHours = 1
 		for(var i = 0 ; i< Math.ceil(resultHours) ; i++){
 			console.log(resultHours - i);
 			var local:any = moment(start._d).subtract(i, 'days');
 			local =  moment(local._d , "YYYY-MM-DD HH:mm:ss").format('dddd');
 			// console.log("add date ====>" , moment(start._d).subtract(i, 'days')._d  , "local ady" ,local);
-			if(local.toString() != "Sunday")
+			
 				totalHours = totalHours + 30600; 
+			
+
 		}
 		array.forEach((obj)=>{
 			// console.log(obj);

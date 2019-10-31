@@ -59,13 +59,17 @@ export class LogsService {
 
   //admin functions
   getTodaysAttendance(){
-    return this._http.get( config.baseApiUrl+"attendance/get-todays-day-logs");      
+    return this._http.get( config.baseApiUrl+"attendance/get-todays-day-logs");
+    // sdjfklsjdlkjfklsdf
+    // ksldflksjdlkfjlksd
+    // ksdlfkjsdkljfklsd
+    // klsdfjklsd
   }
   getLogsBySingleDate(data){
     console.log(data);
     return this._http.post(config.baseApiUrl+"attendance/get-logs-by-single-date" , data);
   }
-  getLogsBetweenDates(data){
+  /*getLogsBetweenDates(data){
 
     return this._http.post(config.baseApiUrl+"attendance/get-logs-between-dates" , data);  
   }
@@ -76,6 +80,6 @@ export class LogsService {
   getLogsByNameBetweenDates(data){
     console.log(data);
     return this._http.post(config.baseApiUrl+"attendance/get-logs-by-name-between-dates", data);
-  }
+  }*/
 
 }

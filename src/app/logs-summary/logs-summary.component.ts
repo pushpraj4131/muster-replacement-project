@@ -57,7 +57,7 @@ export class LogsSummaryComponent implements OnInit {
 					startDate: start,
 					endDate: end,
 					ranges: {
-						'Today': [moment(), moment()],
+						'Today': [moment().add(1, 'days'), moment()],
 						'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
 						'Last 7 Days': [moment().subtract(6, 'days'), moment()],
 						'Last 30 Days': [moment().subtract(29, 'days'), moment()],
@@ -167,10 +167,10 @@ export class LogsSummaryComponent implements OnInit {
 	}
 	searchByName(items){
 		var field1 = (<HTMLInputElement>document.getElementById("searchName")).value;
-			
+		console.log("field 1 =====> " , field1 , "current month logs =====>" , this.currentMonthLogs);
+				
 		this.currentMonthLogs = this._filterPipe.transform(items, field1);
 		console.log("Items  =====> " , items );
-		console.log("field 1 =====> " , field1 , "current month logs =====>" , this.currentMonthLogs);
 	}
 	resetForm(){
 		this.search = false;
@@ -204,6 +204,9 @@ export class LogsSummaryComponent implements OnInit {
 		var workingHours = 0;
 		var totalHours = 0;
 		// console.log("start ========+++>" , start._d , "end ==>" , end._d);
+		console.log("result hours =========>" , resultHours);
+		if(resultHours < 1)
+			resultHours = 1	
 		for(var i = 0 ; i< Math.ceil(resultHours) ; i++){
 			console.log(resultHours - i);
 			var local:any = moment(start._d).subtract(i, 'days');

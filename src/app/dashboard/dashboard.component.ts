@@ -88,14 +88,16 @@ export class DashboardComponent implements OnInit {
 		this._logService.fillAttendance().subscribe((response) =>{
 			console.log("response ====>" , response);
 			this.filledAttendanceLog = this.properFormatDate(response);
+			this.filledAttendanceLog=this.filledAttendanceLog.reverse();  
 			var flag = 0;
 			this.fiveDaysLogs.filter((data)=>{
 				if(data.date == this.filledAttendanceLog[0].date){
+				console.log(data.date , this.filledAttendanceLog[0].date)
 					flag = 1;
 				}
 			});
 			if(flag == 0){
-				this.fiveDaysLogs.unshift( this.filledAttendanceLog[0]);
+				this.fiveDaysLogs.unshift(this.filledAttendanceLog[0]);
 			}else{
 				this.fiveDaysLogs[0] = this.filledAttendanceLog[0];
 			}
@@ -117,7 +119,9 @@ export class DashboardComponent implements OnInit {
 		var id = 0;
 		this._logService.getLastFiveDaysAttendance(id).subscribe((response) => {
 			console.log("last five days response" , response);
-			this.fiveDaysLogs = this.properFormatDate(response);	
+			this.fiveDaysLogs = this.properFormatDate(response);
+			this.fiveDaysLogs = this.fiveDaysLogs.reverse();  
+
 			// this.fiveDaysLogs = response;
 		} ,(err) => {
 			console.log("last five days error" , err);
@@ -157,7 +161,8 @@ export class DashboardComponent implements OnInit {
 		})	
 	}
 	searchByName(items){
-		var field1 = (<HTMLInputElement>document.getElementById("nameSearch")).value;
+		var field1 = (<HTMLInputElement>document.getElementById("nameSearch1")).value;
+		console.log(field1)
 		this.todaysAttendance = this._filterPipe.transform(items, field1);
 	}
 	
