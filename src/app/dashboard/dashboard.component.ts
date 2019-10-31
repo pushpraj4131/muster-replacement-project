@@ -117,9 +117,9 @@ export class DashboardComponent implements OnInit {
 	}
 	getLastFiveDaysAttendance(){
 		var id = 0;
-		this._logService.getLastFiveDaysAttendance(id).subscribe((response) => {
+		this._logService.getLastFiveDaysAttendance(id).subscribe((response:any) => {
 			console.log("last five days response" , response);
-			this.fiveDaysLogs = this.properFormatDate(response);
+			this.fiveDaysLogs = this.properFormatDate(response.foundLogs);
 			this.fiveDaysLogs = this.fiveDaysLogs.reverse();  
 
 			// this.fiveDaysLogs = response;

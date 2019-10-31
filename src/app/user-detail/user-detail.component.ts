@@ -110,12 +110,18 @@ export class UserDetailComponent implements OnInit {
 	}
 	getInitialRecord(){
 		this.search = false;
-		this._logService.getLastFiveDaysAttendance(this.userId).subscribe(async (response) => {
+		this._logService.getLastFiveDaysAttendance(this.userId).subscribe(async (response:any) => {
 			console.log("last five days response" , response);
-			await this.properFormatDate(response);
-			this.fiveDaysLogs = response;
-			this.logs = [];
-			await this.calculateTotalDuration(this.fiveDaysLogs , 5 , moment() , moment().subtract(6, 'days'));
+			if(response.foundLogs){
+				await this.properFormatDate(response.foundLogs);
+				this.totalHoursToWork = response.TotalHoursToComplete; 
+				this.totalHoursWorked = response.TotalHoursCompleted; 
+				console.log("total hours attednent ====>" , this.totalHoursToWork);
+				console.log("total hours to attendnace====>" , this.totalHoursWorked);
+				this.fiveDaysLogs = response.foundLogs;
+				this.logs = [];
+			}
+			// await this.calculateTotalDuration(this.fiveDaysLogs , 5 , moment() , moment().subtract(6, 'days'));
 		} ,(err) => {
 			console.log("last five days error" , err);
 		});
@@ -145,15 +151,19 @@ export class UserDetailComponent implements OnInit {
 			endDate : new Date(end._d).toISOString()
 		}
 			this.search = true;
-			this._logService.getLogsReportById(body).subscribe((res)=>{
+			this._logService.getLogsReportById(body).subscribe((res:any)=>{
 				console.log("response of getLogsReportById" , res);
-				this.logs = this.properFormatDate(res);
+				this.logs = this.properFormatDate(res.foundLogs);
+				this.totalHoursToWork = res.TotalHoursToComplete;
+				this.totalHoursWorked = res.TotalHoursCompleted;
+				console.log("total hours attednent ====>" , this.totalHoursToWork);
+				console.log("total hours to attendnace====>" , this.totalHoursWorked);	
 				//calculate the total duration
-				var startDate = moment(start._d);
-  				var endDate = moment(end._d);  
-				var resultHours = endDate.diff(startDate, 'days', true);
-				console.log("resultHours =====================++>" , resultHours);
-				this.calculateTotalDuration(this.logs , resultHours , start._d , end._d);
+				// var startDate = moment(start._d);
+  		// 		var endDate = moment(end._d);  
+				// var resultHours = endDate.diff(startDate, 'days', true);
+				// console.log("resultHours =====================++>" , resultHours);
+				// this.calculateTotalDuration(this.logs , resultHours , start._d , end._d);
 			} , (err)=>{
 				console.log("err of getLogsReportById" , err);
 			});

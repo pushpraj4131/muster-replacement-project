@@ -114,10 +114,15 @@ export class LogsSummaryComponent implements OnInit {
 	// If userRole == employee
 	page(i){
 		console.log("====>" , i);
-		this._logService.getLogsByMonthDefaultByPage({page : i}).subscribe((response) => {
+		this._logService.getLogsByMonthDefaultByPage({page : i}).subscribe((response:any) => {
 			console.log("response of getLogsByMonthDefault ==>" , response);
-			this.currentMonthLogs =  this.properFormatDate(response);
-			this.calculateTotalDuration(this.currentMonthLogs , 5 , moment() , moment().subtract(6, 'days'));
+			this.currentMonthLogs = this.properFormatDate(response.foundLogs);
+			this.totalHoursToWork = response.TotalHoursToComplete;
+			this.totalHoursWorked = response.TotalHoursCompleted;
+			console.log("total hours attednent ====>" , this.totalHoursToWork);
+			console.log("total hours to attendnace====>" , this.totalHoursWorked);
+			// this.currentMonthLogs =  this.properFormatDate(response);
+			// this.calculateTotalDuration(this.currentMonthLogs , 5 , moment() , moment().subtract(6, 'days'));
 			// this.currentMonthLogs = response;
 		}, (err) => {
 			console.log("err of getLogsByMonthDefault ==>" , err);
@@ -158,7 +163,8 @@ export class LogsSummaryComponent implements OnInit {
 		this._logService.getTodaysAttendance().subscribe((response:any) => {
 			console.log('getTodaysAttendance response in logs '  , response);
 			this.currentMonthLogs = this.properFormatDate(response.data);
-			this.calculateTotalDuration(this.currentMonthLogs , 5 , moment() , moment().subtract(6, 'days'));
+
+			
 			this.searchData = response.data;
 			
 		} , (err) => {
@@ -188,13 +194,14 @@ export class LogsSummaryComponent implements OnInit {
 			this.search = true;
 			this._logService.getLogsReportById(body).subscribe((res:any)=>{
 				console.log("response of getLogsReportById" , res);
-				this.logs = this.properFormatDate(res);
-				//calculate the total duration
-				var startDate = moment(start._d);
-  				var endDate = moment(end._d);  
-				var resultHours = endDate.diff(startDate, 'days', true);
-				console.log("resultHours =====================++>" , resultHours);
-				this.calculateTotalDuration(this.logs , resultHours , start._d , end._d);
+				if(res.foundLogs){ 
+					this.logs = this.properFormatDate(res.foundLogs);
+					this.totalHoursToWork = res.TotalHoursToComplete;
+					this.totalHoursWorked = res.TotalHoursCompleted;
+					console.log("total hours attednent ====>" , this.totalHoursToWork);
+					console.log("total hours to attendnace====>" , this.totalHoursWorked);
+				}
+				
 			} , (err)=>{
 				console.log("err of getLogsReportById" , err);
 			});
