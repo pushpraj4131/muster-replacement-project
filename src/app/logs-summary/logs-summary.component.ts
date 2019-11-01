@@ -57,7 +57,7 @@ export class LogsSummaryComponent implements OnInit {
 					startDate: start,
 					endDate: end,
 					ranges: {
-						'Today': [moment().add(1, 'days'), moment()],
+						'Today': [moment(), moment()],
 						'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
 						'Last 7 Days': [moment().subtract(6, 'days'), moment()],
 						'Last 30 Days': [moment().subtract(29, 'days'), moment()],
@@ -186,9 +186,10 @@ export class LogsSummaryComponent implements OnInit {
 	getRangeDate(start, end){
 		if(this.currentMonthLogs){
 		console.log(" date " ,new Date(start._d).toISOString() , new Date(end._d).toISOString());
+		var increseStartDate:any = moment(start._d).add(1 , 'days');
 		var body = {
 			userId : JSON.parse(localStorage.getItem("currentUser"))._id,
-			startDate : new Date(start._d).toISOString(),
+			startDate : new Date(increseStartDate).toISOString(),
 			endDate : new Date(end._d).toISOString()
 		}
 			this.search = true;
