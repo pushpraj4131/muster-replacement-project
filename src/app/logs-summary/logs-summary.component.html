@@ -96,7 +96,7 @@
                 <tbody>
                   <ng-container *ngIf="currentMonthLogs && !search">
                     <tr  *ngFor="let data of currentMonthLogs | paginate:{itemsPerPage: 10, currentPage:p}; let i = index">
-                      <th scope="row" *ngIf="userInfo.userRole == 'admin'">
+                      <th scope="row"  class="nameClick" [routerLink]="['/all-users/user-detail/' ,data.userId._id]" *ngIf="userInfo.userRole == 'admin'">
                       {{ data.userId.name }}
                     </th>
                       <th scope="row">

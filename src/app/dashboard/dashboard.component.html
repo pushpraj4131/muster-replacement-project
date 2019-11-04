@@ -173,7 +173,7 @@
                   </ng-container>
                   <ng-container *ngIf="userInfo.userRole == 'admin'">
                     <tr  *ngFor="let data of todaysAttendance | paginate:{itemsPerPage: 5, currentPage:p}; let i = index">
-                      <th scope="row">
+                      <th scope="row" class="nameClick" [routerLink]="['/all-users/user-detail/' ,data.userId._id]">
                         {{ data.userId.name }}
                       </th>
                       <td>
@@ -251,3 +251,4 @@
       </div>
     </div>
   </div>
+

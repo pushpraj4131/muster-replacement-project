@@ -1,4 +1,4 @@
-import { Component, OnInit , Output , Input} from '@angular/core';
+import { Component, OnInit , Output , Input , ViewEncapsulation} from '@angular/core';
 import { LogsService } from '../services/logs.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { LoginService } from '../services/login.service';
@@ -39,6 +39,7 @@ export class DashboardComponent implements OnInit {
 		private router: Router , public _loginService: LoginService , public _filterPipe: FilterPipe) { }
 
 	ngOnInit() {
+
 		this.getUserIP(function(ip){
 			console.log(ip)
 		});

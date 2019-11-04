@@ -35,3 +35,10 @@
 ::-ms-input-placeholder { /* Microsoft Edge */
  color: red;
 }
+.nameClick{
+  outline: none;
+  cursor: pointer;
+}
+.nameClick:hover{
+  color: red;
+}

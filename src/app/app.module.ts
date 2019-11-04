@@ -19,6 +19,7 @@ import { LoginComponent } from './login/login.component';
 import { FilterPipe } from './filter.pipe';
 import { AllUsersComponent } from './all-users/all-users.component';
 import { UserDetailComponent } from './user-detail/user-detail.component';
+import { TestingDatepickerComponent } from './testing-datepicker/testing-datepicker.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { UserDetailComponent } from './user-detail/user-detail.component';
     LoginComponent,
     FilterPipe,
     AllUsersComponent,
-    UserDetailComponent
+    UserDetailComponent,
+    TestingDatepickerComponent
   ],
   imports: [
     BrowserModule,
