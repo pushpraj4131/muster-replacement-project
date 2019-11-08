@@ -161,7 +161,8 @@ export class UserDetailComponent implements OnInit {
 			this._logService.getLogsReportById(body).subscribe((res:any)=>{
 				console.log("response of getLogsReportById" , res);
 				if(res.foundLogs){
-					this.logs = this.properFormatDate(res.foundLogs);
+					this.logs = res.foundLogs;
+					// this.logs = this.properFormatDate(res.foundLogs);
 					this.totalHoursToWork = res.TotalHoursToComplete;
 					this.totalHoursWorked = res.TotalHoursCompleted;
 					console.log("total hours attednent ====>" , this.totalHoursToWork);

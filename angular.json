@@ -23,10 +23,8 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css"
-              // "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              // "node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css",
-              // "node_modules/daterangepicker/daterangepicker.css"
+              "src/styles.css",
+              "node_modules/@ng-select/ng-select/themes/material.theme.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
@@ -89,6 +87,8 @@
             "tsConfig": "src/tsconfig.spec.json",
             "karmaConfig": "src/karma.conf.js",
             "styles": [
+              "./node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "./node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
               "src/styles.css"
             ],
             "scripts": [],

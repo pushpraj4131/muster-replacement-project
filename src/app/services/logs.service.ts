@@ -69,17 +69,9 @@ export class LogsService {
     console.log(data);
     return this._http.post(config.baseApiUrl+"attendance/get-logs-by-single-date" , data);
   }
-  /*getLogsBetweenDates(data){
-
-    return this._http.post(config.baseApiUrl+"attendance/get-logs-between-dates" , data);  
+  getReportFlagWise(body){
+    console.log(body);
+    return this._http.post( config.baseApiUrl+"attendance/get-report-by-flag" , body);
   }
-  getLogsByNameBySingleDate( data){
-    console.log(data);
-    return this._http.post(config.baseApiUrl+"attendance/get-logs-by-name-by-single-date" , data);
-  }
-  getLogsByNameBetweenDates(data){
-    console.log(data);
-    return this._http.post(config.baseApiUrl+"attendance/get-logs-by-name-between-dates", data);
-  }*/
 
 }

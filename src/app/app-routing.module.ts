@@ -8,6 +8,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { LoginComponent } from './login/login.component';
 import { AllUsersComponent } from './all-users/all-users.component';
 import { UserDetailComponent } from './user-detail/user-detail.component';
+import { UserReportComponent } from './user-report/user-report.component';
 import { AppComponent } from './app.component';
 const routes: Routes = [
 	{
@@ -37,6 +38,14 @@ const routes: Routes = [
 	{
 		path : 'all-users/user-detail/:id',
 		component : UserDetailComponent
+	},
+	{
+		path : 'user-report/:id',
+		component : UserReportComponent
+	},
+	{
+		path : 'user-report',
+		component : UserReportComponent
 	}
 ];
 

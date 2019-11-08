@@ -4,10 +4,9 @@ import { HttpClientModule }    from '@angular/common/http';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { NgxPaginationModule } from 'ngx-pagination';
-// import {  } from './app.ro';
-// import {MatDatepickerModule} from '@angular/material/datepicker';
-// import { MatDatepickerModule, MatNativeDateModule } from '@angular/material';
-
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { DatepickerModule,   BsDatepickerModule, BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -20,7 +19,11 @@ import { FilterPipe } from './filter.pipe';
 import { AllUsersComponent } from './all-users/all-users.component';
 import { UserDetailComponent } from './user-detail/user-detail.component';
 import { TestingDatepickerComponent } from './testing-datepicker/testing-datepicker.component';
+import { UserReportComponent } from './user-report/user-report.component';
 
+import { setTheme } from 'ngx-bootstrap/utils';
+
+setTheme('bs4'); // or 'bs4'
 @NgModule({
   declarations: [
     AppComponent,
@@ -31,7 +34,8 @@ import { TestingDatepickerComponent } from './testing-datepicker/testing-datepic
     FilterPipe,
     AllUsersComponent,
     UserDetailComponent,
-    TestingDatepickerComponent
+    TestingDatepickerComponent,
+    UserReportComponent,
   ],
   imports: [
     BrowserModule,
@@ -39,7 +43,11 @@ import { TestingDatepickerComponent } from './testing-datepicker/testing-datepic
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    NgSelectModule,
+    BsDatepickerModule.forRoot(),
+    DatepickerModule.forRoot() ,
+    BrowserAnimationsModule 
   ],
   providers: [],
   bootstrap: [AppComponent]
